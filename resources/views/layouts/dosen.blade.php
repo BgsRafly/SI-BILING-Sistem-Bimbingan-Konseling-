@@ -41,6 +41,9 @@
                 <a href="/dosen/pengajuan" class="flex items-center px-3 py-2.5 {{ request()->is('dosen/pengajuan*') ? 'bg-[#EEF2FF] text-[#004133] font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} rounded-lg text-sm transition-colors">
                     <i class="fa-regular fa-calendar-plus w-6 text-center mr-2"></i> Pengajuan & Jadwal
                 </a>
+                <a href="/dosen/bimbingan_pa" class="flex items-center px-3 py-2.5 {{ request()->is('dosen/bimbingan_pa') ? 'bg-[#EEF2FF] text-[#004133] font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} rounded-lg text-sm transition-colors">
+                    <i class="fa-solid fa-users w-6 text-center mr-2"></i> Mahasiswa Bimbingan
+                </a>
                 <a href="/dosen/riwayat" class="flex items-center px-3 py-2.5 {{ request()->is('dosen/riwayat') ? 'bg-[#EEF2FF] text-[#004133] font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} rounded-lg text-sm transition-colors">
                     <i class="fa-solid fa-file-lines w-6 text-center mr-2"></i> Riwayat Sesi
                 </a>

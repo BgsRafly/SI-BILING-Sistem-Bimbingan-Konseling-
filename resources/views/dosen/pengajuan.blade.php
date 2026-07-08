@@ -41,14 +41,13 @@
                         <p class="text-xs text-slate-500 line-clamp-1 max-w-[200px]" title="{{ $ajuan->deskripsi_keluhan }}">{{ $ajuan->deskripsi_keluhan }}</p>
                     </td>
                     <td class="p-4">
-                        <div class="flex gap-1">
-                            @for($i = 0; $i < $ajuan->skala_urgensi; $i++)
-                                <i class="fa-solid fa-fire text-orange-500 text-xs"></i>
-                            @endfor
-                            @for($i = $ajuan->skala_urgensi; $i < 5; $i++)
-                                <i class="fa-solid fa-fire text-slate-200 text-xs"></i>
-                            @endfor
-                        </div>
+                        @if($ajuan->skala_urgensi >= 4)
+                            <span class="text-red-600 font-bold text-sm">Tinggi</span>
+                        @elseif($ajuan->skala_urgensi == 3)
+                            <span class="text-blue-600 font-bold text-sm">Sedang</span>
+                        @else
+                            <span class="text-green-600 font-bold text-sm">Rendah</span>
+                        @endif
                     </td>
                     <td class="p-4">
                         <p class="text-sm font-medium text-slate-800">{{ \Carbon\Carbon::parse($ajuan->tanggal_bimbingan)->format('d M Y') }}</p>

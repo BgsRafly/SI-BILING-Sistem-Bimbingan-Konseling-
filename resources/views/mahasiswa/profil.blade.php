@@ -74,9 +74,9 @@
                     </div>
 
                     <!-- Edit Mode -->
-                    <form id="wa-form" action="/mahasiswa/profil" method="POST" class="hidden flex-1 flex gap-2">
+                    <form id="wa-form" action="/mahasiswa/profil" method="POST" class="hidden flex-1 flex gap-2" onsubmit="return confirm('Apakah data yang Anda masukkan sudah valid?');">
                         @csrf
-                        <input type="text" name="no_whatsapp" value="{{ $user->no_whatsapp }}" required placeholder="0812..." class="flex-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#004133] focus:border-[#004133]">
+                        <input type="text" name="no_whatsapp" value="{{ $user->no_whatsapp }}" required placeholder="0812..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="15" class="flex-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#004133] focus:border-[#004133]">
                         <button type="submit" class="bg-[#004133] text-white px-4 py-1.5 rounded-md text-sm font-medium hover:bg-[#003328] transition-colors">Simpan</button>
                     </form>
                 </div>

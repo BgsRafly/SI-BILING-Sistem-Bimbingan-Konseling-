@@ -80,7 +80,9 @@ class WD3Controller extends Controller
         
         $request->validate([
             'status' => 'required|in:Diproses Fakultas,Selesai',
-            'catatan_wd3' => 'required|string'
+            'catatan_wd3' => 'required|string',
+            'tanggal_wd3' => 'nullable|date',
+            'waktu_wd3' => 'nullable|date_format:H:i'
         ], [
             'status.required' => 'Keputusan harus dipilih.',
             'catatan_wd3.required' => 'Catatan penyelesaian wajib diisi.'
@@ -90,7 +92,9 @@ class WD3Controller extends Controller
 
         $ajuan->update([
             'status' => $request->status,
-            'catatan_wd3' => $request->catatan_wd3
+            'catatan_wd3' => $request->catatan_wd3,
+            'tanggal_wd3' => $request->tanggal_wd3,
+            'waktu_wd3' => $request->waktu_wd3
         ]);
 
         return redirect('/wd3/dashboard')->with('success', 'Status laporan berhasil diperbarui menjadi ' . $request->status . '.');

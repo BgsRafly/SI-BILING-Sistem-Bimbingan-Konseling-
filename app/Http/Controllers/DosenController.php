@@ -30,7 +30,7 @@ class DosenController extends Controller
         $totalSelesai = Ajuan::where('dosen_id', $dosen->id)->where('status', 'Selesai')->count();
 
         // 1. Total Mahasiswa Bimbingan
-        $totalMahasiswa = Ajuan::where('dosen_id', $dosen->id)->distinct('mahasiswa_id')->count('mahasiswa_id');
+        $totalMahasiswa = User::where('role', 'mahasiswa')->where('dosen_pa_id', $dosen->id)->count();
 
         // 2. Sesi minggu ini
         $startOfWeek = \Carbon\Carbon::now()->startOfWeek();
@@ -255,6 +255,24 @@ class DosenController extends Controller
         $pdf = Pdf::loadView('pdf.laporan_dosen', compact('dosen', 'stats', 'ajuans'));
         
         return $pdf->download('Rekap_Laporan_Bimbingan_'. $dosen->nim_nip .'.pdf');
+    }
+
+    public function bimbinganPA()
+    {
+        $dosen = $this->getDosen();
+        
+        $mahasiswas = User::where('role', 'mahasiswa')
+            ->where('dosen_pa_id', $dosen->id)
+            ->withCount(['ajuans' => function($query) {
+                $query->where('status', 'Selesai');
+            }])
+            ->with(['ajuans' => function($query) {
+                $query->latest()->take(1);
+            }])
+            ->orderBy('name')
+            ->get();
+            
+        return view('dosen.bimbingan_pa', compact('dosen', 'mahasiswas'));
     }
 
     public function pengaturan()

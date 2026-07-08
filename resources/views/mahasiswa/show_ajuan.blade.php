@@ -29,7 +29,15 @@
                 <div>
                     <h4 class="text-lg font-bold text-slate-800">{{ $ajuan->dosen->name }}</h4>
                     <p class="text-sm text-slate-500">Dosen Pendamping Akademik (PA)</p>
-                    <p class="text-sm text-slate-500 mt-1"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $ajuan->dosen->no_whatsapp ?? 'Belum diatur' }}</p>
+                    @if($ajuan->dosen->no_whatsapp)
+                        @php
+                            $wa = $ajuan->dosen->no_whatsapp;
+                            if(str_starts_with($wa, '0')) $wa = '62' . substr($wa, 1);
+                        @endphp
+                        <p class="text-sm text-slate-500 mt-1"><a href="https://wa.me/{{ $wa }}" target="_blank" class="hover:underline text-green-600"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $ajuan->dosen->no_whatsapp }}</a></p>
+                    @else
+                        <p class="text-sm text-slate-500 mt-1"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> Belum diatur</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -47,6 +55,8 @@
                     <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-200">Reschedule</span>
                 @elseif($ajuan->status === 'Selesai')
                     <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-bold border border-slate-200">Selesai</span>
+                @elseif($ajuan->status === 'Eskalasi WD3' || $ajuan->status === 'Diproses Fakultas')
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold border border-purple-200">Diproses di WD3</span>
                 @else
                     <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">{{ $ajuan->status }}</span>
                 @endif
@@ -101,6 +111,14 @@
         <!-- Waktu Rencana -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h3 class="font-semibold text-slate-800 mb-4 pb-3 border-b border-slate-100">Jadwal Pertemuan</h3>
+            
+            @if(($ajuan->status === 'Eskalasi WD3' || $ajuan->status === 'Diproses Fakultas') && $ajuan->tanggal_wd3)
+            <div class="mb-5 bg-purple-50 border border-purple-100 rounded-lg p-3 flex gap-3 items-start">
+                <i class="fa-solid fa-circle-info text-purple-500 mt-0.5"></i>
+                <p class="text-[11px] text-purple-700 leading-relaxed font-medium">Jadwal pertemuan berikut telah ditetapkan secara langsung oleh Wakil Dekan 3. Harap hadir sesuai dengan waktu yang ditentukan.</p>
+            </div>
+            @endif
+
             <div class="space-y-4">
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
@@ -108,7 +126,11 @@
                     </div>
                     <div>
                         <p class="text-xs text-slate-500 font-medium mb-0.5">Tanggal Bimbingan</p>
-                        <p class="font-semibold text-slate-800 text-sm">{{ \Carbon\Carbon::parse($ajuan->tanggal_bimbingan)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+                        @if(($ajuan->status === 'Eskalasi WD3' || $ajuan->status === 'Diproses Fakultas') && $ajuan->tanggal_wd3)
+                            <p class="font-semibold text-slate-800 text-sm">{{ \Carbon\Carbon::parse($ajuan->tanggal_wd3)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+                        @else
+                            <p class="font-semibold text-slate-800 text-sm">{{ $ajuan->tanggal_bimbingan ? \Carbon\Carbon::parse($ajuan->tanggal_bimbingan)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}</p>
+                        @endif
                     </div>
                 </div>
                 <div class="flex items-start gap-3">
@@ -117,7 +139,11 @@
                     </div>
                     <div>
                         <p class="text-xs text-slate-500 font-medium mb-0.5">Jam Bimbingan</p>
-                        <p class="font-semibold text-slate-800 text-sm">{{ date('H:i', strtotime($ajuan->jam_bimbingan)) }} WITA</p>
+                        @if(($ajuan->status === 'Eskalasi WD3' || $ajuan->status === 'Diproses Fakultas') && $ajuan->waktu_wd3)
+                            <p class="font-semibold text-slate-800 text-sm">{{ date('H:i', strtotime($ajuan->waktu_wd3)) }} WITA</p>
+                        @else
+                            <p class="font-semibold text-slate-800 text-sm">{{ $ajuan->jam_bimbingan ? date('H:i', strtotime($ajuan->jam_bimbingan)) . ' WITA' : '-' }}</p>
+                        @endif
                     </div>
                 </div>
                 <div class="flex items-start gap-3">
@@ -169,12 +195,16 @@
                     </div>
                     <h4 class="text-lg font-bold text-slate-800 mb-2">Sesi Selesai</h4>
                     <p class="text-sm text-slate-500">Sesi konseling ini telah selesai dilaksanakan.</p>
-                @elseif($ajuan->status === 'Eskalasi WD3')
+                @elseif($ajuan->status === 'Eskalasi WD3' || $ajuan->status === 'Diproses Fakultas')
                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-100 text-purple-600 mb-4">
                         <i class="fa-solid fa-arrow-up-right-dots text-2xl"></i>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-800 mb-2">Eskalasi ke WD3</h4>
-                    <p class="text-sm text-slate-500">Masalah Anda telah dilanjutkan ke Wakil Dekan 3 untuk penanganan lebih lanjut.</p>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Diproses di WD3</h4>
+                    @if($ajuan->tanggal_wd3 && $ajuan->waktu_wd3)
+                        <p class="text-sm text-slate-500">Jadwal pertemuan dengan Wakil Dekan 3 telah ditetapkan. Harap hadir tepat waktu sesuai dengan tanggal dan jam yang tertera pada bagian jadwal.</p>
+                    @else
+                        <p class="text-sm text-slate-500">Masalah Anda telah dilanjutkan ke Wakil Dekan 3 untuk penanganan lebih lanjut.</p>
+                    @endif
                 @endif
                 
                 @if($ajuan->catatan_dosen)

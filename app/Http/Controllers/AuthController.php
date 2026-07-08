@@ -53,7 +53,7 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'nim_nip' => ['required', 'string', 'regex:/^[0-9]+$/', 'unique:users,nim_nip'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'no_whatsapp' => ['required', 'string', 'max:20'],
+            'no_whatsapp' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:15'],
             'program_studi' => ['required', 'string', 'in:kimia,fisika,biologi,matematika,farmasi,informatika'],
             'angkatan' => ['required', 'integer', 'min:2000', 'max:' . (date('Y') + 1)],
             'dosen_pa_id' => ['required', 'exists:users,id'],
@@ -62,6 +62,7 @@ class AuthController extends Controller
             'nim_nip.regex' => 'NIM hanya boleh berisi angka.',
             'nim_nip.unique' => 'NIM ini sudah terdaftar.',
             'email.unique' => 'Email ini sudah terdaftar.',
+            'no_whatsapp.regex' => 'No WhatsApp hanya boleh berisi angka.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'program_studi.in' => 'Program Studi tidak valid.',
         ]);

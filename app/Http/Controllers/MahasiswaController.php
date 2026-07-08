@@ -113,6 +113,24 @@ class MahasiswaController extends Controller
         return view('mahasiswa.show_ajuan', compact('user', 'ajuan'));
     }
 
+    // 4b. Batalkan Ajuan
+    public function batalAjuan($id)
+    {
+        $user = Auth::user() ?? \App\Models\User::where('role', 'mahasiswa')->first();
+        
+        $ajuan = Ajuan::where('mahasiswa_id', $user->id)->findOrFail($id);
+
+        if ($ajuan->status !== 'Pending') {
+            return redirect('/mahasiswa/riwayat')->withErrors(['Pengajuan tidak dapat dibatalkan karena sudah diproses.']);
+        }
+
+        // Soft delete / delete permanent atau update status? Biasanya dihapus jika batal, atau status 'Dibatalkan'.
+        // Jika kita gunakan 'Dibatalkan' kita harus ubah ENUM. Lebih aman delete saja.
+        $ajuan->delete();
+
+        return redirect('/mahasiswa/riwayat')->with('success', 'Pengajuan konseling berhasil dibatalkan.');
+    }
+
     // 5. Riwayat Konseling
     public function riwayat()
     {
@@ -133,7 +151,9 @@ class MahasiswaController extends Controller
     public function updateProfil(Request $request)
     {
         $request->validate([
-            'no_whatsapp' => 'required|string|max:20',
+            'no_whatsapp' => 'required|string|regex:/^[0-9]+$/|max:15',
+        ], [
+            'no_whatsapp.regex' => 'No WhatsApp hanya boleh berisi angka.',
         ]);
 
         $user = Auth::user() ?? \App\Models\User::where('role', 'mahasiswa')->first();

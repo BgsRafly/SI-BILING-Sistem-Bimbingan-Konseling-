@@ -99,7 +99,7 @@
                                         </div>
                                         <div>
                                             <p class="font-bold text-gray-900 text-sm">{{ $ajuan->mahasiswa->name }}</p>
-                                            <p class="text-[11px] text-gray-500 mt-0.5">{{ $ajuan->mahasiswa->nim_nip }} • Dosen PA: {{ $ajuan->dosen->name }}</p>
+                                            <p class="text-[11px] text-gray-500 mt-0.5">{{ $ajuan->mahasiswa->nim_nip }} • Dosen PA: {{ $ajuan->dosen->name ?? 'Belum ada PA' }}</p>
                                         </div>
                                     </div>
                                 </td>
@@ -111,6 +111,11 @@
                                         <span class="inline-flex items-center gap-1.5 text-orange-700 text-[11px] font-bold bg-orange-100 px-2.5 py-1 rounded-full border border-orange-200">
                                             <i class="fa-solid fa-spinner"></i> Diproses Fakultas
                                         </span>
+                                        @if($ajuan->tanggal_wd3)
+                                            <div class="mt-1.5"><span class="inline-flex items-center gap-1 text-[9px] font-bold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-100">
+                                                <i class="fa-solid fa-calendar-check"></i> Sudah menentukan jadwal
+                                            </span></div>
+                                        @endif
                                     @else
                                         <span class="inline-flex items-center gap-1.5 text-green-700 text-[11px] font-bold bg-green-100 px-2.5 py-1 rounded-full border border-green-200">
                                             <i class="fa-solid fa-check"></i> Selesai

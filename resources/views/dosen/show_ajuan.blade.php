@@ -29,7 +29,15 @@
                 <div>
                     <h4 class="text-lg font-bold text-slate-800">{{ $ajuan->mahasiswa->name }}</h4>
                     <p class="text-sm text-slate-500">Program Studi S1 {{ $ajuan->mahasiswa->program_studi }} (Angkatan {{ $ajuan->mahasiswa->angkatan }})</p>
-                    <p class="text-sm text-slate-500 mt-1"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $ajuan->mahasiswa->no_whatsapp ?? 'Belum diatur' }}</p>
+                    @if($ajuan->mahasiswa->no_whatsapp)
+                        @php
+                            $wa = $ajuan->mahasiswa->no_whatsapp;
+                            if(str_starts_with($wa, '0')) $wa = '62' . substr($wa, 1);
+                        @endphp
+                        <p class="text-sm text-slate-500 mt-1"><a href="https://wa.me/{{ $wa }}" target="_blank" class="hover:underline text-green-600"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $ajuan->mahasiswa->no_whatsapp }}</a></p>
+                    @else
+                        <p class="text-sm text-slate-500 mt-1"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> Belum diatur</p>
+                    @endif
                 </div>
             </div>
         </div>

@@ -74,6 +74,9 @@
                     <p class="text-gray-500 mt-2 text-sm font-medium">Ringkasan aktivitas dan metrik penggunaan SI-BILING.</p>
                 </div>
                 <div class="flex gap-3">
+                    <a href="/admin/dashboard/pdf" target="_blank" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> Cetak Statistik (PDF)
+                    </a>
                     <a href="/admin/pengguna" class="bg-[#004133] text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-[#003328] transition-all shadow-sm flex items-center gap-2">
                         <i class="fa-solid fa-users"></i> Kelola Dosen
                     </a>
@@ -124,37 +127,89 @@
                 </div>
             </div>
 
-            <!-- Activity Log -->
-            <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden mb-8">
-                <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800">Log Aktivitas Terbaru</h2>
-                        <p class="text-xs text-gray-500 mt-1">Rekam jejak tindakan penting di dalam sistem.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Activity Log -->
+                <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">Log Aktivitas Terbaru</h2>
+                            <p class="text-xs text-gray-500 mt-1">Rekam jejak tindakan penting di dalam sistem.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="divide-y divide-gray-50">
+                        @forelse($recentActivities as $activity)
+                        <div class="p-5 hover:bg-gray-50 transition-colors flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-{{ $activity['color'] }}-50 text-{{ $activity['color'] }}-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid {{ $activity['icon'] }} text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">{{ $activity['title'] }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ $activity['description'] }}</p>
+                            </div>
+                            <span class="text-xs font-medium text-gray-400">{{ \Carbon\Carbon::parse($activity['created_at'])->diffForHumans() }}</span>
+                        </div>
+                        @empty
+                        <div class="p-8 text-center text-gray-500 font-medium">
+                            Belum ada aktivitas tercatat di dalam sistem.
+                        </div>
+                        @endforelse
                     </div>
                 </div>
-                
-                <div class="divide-y divide-gray-50">
-                    @forelse($recentActivities as $activity)
-                    <div class="p-5 hover:bg-gray-50 transition-colors flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-{{ $activity['color'] }}-50 text-{{ $activity['color'] }}-600 flex items-center justify-center shrink-0">
-                            <i class="fa-solid {{ $activity['icon'] }} text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-semibold text-gray-900">{{ $activity['title'] }}</p>
-                            <p class="text-xs text-gray-500 mt-0.5">{{ $activity['description'] }}</p>
-                        </div>
-                        <span class="text-xs font-medium text-gray-400">{{ \Carbon\Carbon::parse($activity['created_at'])->diffForHumans() }}</span>
+
+                <!-- Status Chart -->
+                <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden p-6 flex flex-col">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">Statistik Status Laporan</h2>
+                        <p class="text-xs text-gray-500 mt-1 mb-4">Distribusi status pengajuan bimbingan saat ini.</p>
                     </div>
-                    @empty
-                    <div class="p-8 text-center text-gray-500 font-medium">
-                        Belum ada aktivitas tercatat di dalam sistem.
+                    <div class="flex-1 relative min-h-[250px]">
+                        <canvas id="adminStatusChart"></canvas>
                     </div>
-                    @endforelse
                 </div>
             </div>
 
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('adminStatusChart');
+            if(ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: {!! json_encode(array_keys($statusStats)) !!},
+                        datasets: [{
+                            data: {!! json_encode(array_values($statusStats)) !!},
+                            backgroundColor: [
+                                '#3B82F6', // blue
+                                '#10B981', // green
+                                '#F59E0B', // yellow
+                                '#EF4444', // red
+                                '#8B5CF6'  // purple
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    font: { family: 'Inter', size: 12 },
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<form action="/mahasiswa/pengajuan/baru" method="POST">
+<form action="/mahasiswa/pengajuan/baru" method="POST" onsubmit="return confirm('Apakah data yang Anda masukkan sudah valid?');">
     @csrf
     
     @if(session('success'))

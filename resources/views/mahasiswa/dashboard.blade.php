@@ -82,6 +82,10 @@
                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-100 text-indigo-700 border border-indigo-200">
                             Disetujui
                         </span>
+                        @elseif($ajuan->status == 'Reschedule')
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
+                            Reschedule
+                        </span>
                         @else
                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                             {{ $ajuan->status }}

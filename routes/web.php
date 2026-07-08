@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dosen/pengajuan/{id}/eskalasi', [DosenController::class, 'prosesEskalasi']);
     Route::get('/dosen/riwayat', [DosenController::class, 'riwayat']);
     Route::get('/dosen/eskalasi', [DosenController::class, 'eskalasi']);
+    Route::get('/dosen/bimbingan_pa', [DosenController::class, 'bimbinganPA']);
     Route::get('/dosen/laporan', [DosenController::class, 'laporan']);
     Route::get('/dosen/laporan/ekspor', [DosenController::class, 'eksporLaporan']);
     Route::get('/dosen/pengaturan', [DosenController::class, 'pengaturan']);
@@ -31,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/mahasiswa/pengajuan/baru', [MahasiswaController::class, 'createAjuan']);
     Route::post('/mahasiswa/pengajuan/baru', [MahasiswaController::class, 'storeAjuan']);
     Route::get('/mahasiswa/pengajuan/{id}', [MahasiswaController::class, 'showAjuan']);
+    Route::post('/mahasiswa/pengajuan/{id}/batal', [MahasiswaController::class, 'batalAjuan']);
     Route::get('/mahasiswa/riwayat', [MahasiswaController::class, 'riwayat']);
     Route::get('/mahasiswa/profil', [MahasiswaController::class, 'profil']);
     Route::post('/mahasiswa/profil', [MahasiswaController::class, 'updateProfil']);
@@ -54,10 +56,12 @@ Route::middleware('auth')->group(function () {
     // Kategori Management
     Route::get('/admin/kategori', [AdminController::class, 'kategori']);
     Route::post('/admin/kategori', [AdminController::class, 'storeKategori']);
-    Route::put('/admin/kategori/{id}', [AdminController::class, 'updateKategori']);
-    Route::delete('/admin/kategori/{id}', [AdminController::class, 'destroyKategori']);
+    Route::post('/admin/kategori/{id}', [AdminController::class, 'updateKategori']);
+    Route::post('/admin/kategori/{id}/hapus', [AdminController::class, 'destroyKategori']);
 
-    // Laporan Management
+    // Admin Laporan
     Route::get('/admin/laporan', [AdminController::class, 'laporan']);
+    Route::get('/admin/laporan/ekspor', [AdminController::class, 'exportCsv']);
     Route::post('/admin/laporan/{id}/status', [AdminController::class, 'updateStatusLaporan']);
+    Route::get('/admin/dashboard/pdf', [AdminController::class, 'exportPdf']);
 });

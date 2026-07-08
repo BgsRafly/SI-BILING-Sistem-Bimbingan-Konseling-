@@ -27,6 +27,8 @@ class Ajuan extends Model
         'catatan_dosen',
         'file_eskalasi',
         'catatan_wd3',
+        'tanggal_wd3',
+        'waktu_wd3',
     ];
 
     public function mahasiswa()

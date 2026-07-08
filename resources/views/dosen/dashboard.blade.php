@@ -63,15 +63,7 @@
                                         </span>
                                     @endif
 
-                                    @if($ajuan->skala_beban_pikiran >= 7)
-                                        <span class="text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold border border-slate-200">
-                                            Kondisi: Stres
-                                        </span>
-                                    @else
-                                        <span class="text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold border border-slate-200">
-                                            Kondisi: Normal
-                                        </span>
-                                    @endif
+
                                 </div>
 
                                 <p class="text-sm text-slate-700 font-medium mt-2 pr-4 text-justify">"{{ Str::limit($ajuan->deskripsi_keluhan, 120) }}"</p>

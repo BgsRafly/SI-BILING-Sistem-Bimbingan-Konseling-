@@ -55,7 +55,15 @@
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Chart Status -->
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden p-6">
+        <h2 class="text-base font-bold text-slate-800 mb-4">Statistik Status Laporan</h2>
+        <div class="relative w-full h-[250px]">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+
     <!-- Statistik Kategori -->
     <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden h-fit">
         <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-slate-50">
@@ -77,9 +85,10 @@
             </ul>
         </div>
     </div>
+</div>
 
-    <!-- Semua Data Bimbingan -->
-    <div class="lg:col-span-2 bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+<!-- Semua Data Bimbingan -->
+<div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-slate-50">
             <h2 class="text-base font-bold text-slate-800">Semua Data Bimbingan</h2>
         </div>
@@ -141,5 +150,44 @@
             </table>
         </div>
     </div>
-</div>
+@endsection
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Selesai', 'Tertunda', 'Eskalasi WD3', 'Disetujui', 'Reschedule', 'Ditolak'],
+            datasets: [{
+                data: [{{ $stats['selesai'] }}, {{ $stats['pending'] }}, {{ $stats['eskalasi'] }}, {{ $stats['disetujui'] }}, {{ $stats['reschedule'] }}, {{ $stats['ditolak'] }}],
+                backgroundColor: [
+                    '#10B981', // green-500
+                    '#F97316', // orange-500
+                    '#EF4444', // red-500
+                    '#3B82F6', // blue-500
+                    '#A855F7', // purple-500
+                    '#6B7280'  // gray-500
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: { family: 'Inter', size: 12 },
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+</script>
 @endsection

@@ -9,6 +9,7 @@ use App\Models\Ajuan;
 use App\Models\Kategori;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminController extends Controller
 {
@@ -29,6 +30,11 @@ class AdminController extends Controller
         $totalMahasiswa = User::where('role', 'mahasiswa')->count();
         $totalLaporan = Ajuan::count();
         $totalKategori = Kategori::count();
+
+        $statusStats = Ajuan::select('status', \DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
         
         // Fetch real activities
         $activities = collect([]);
@@ -75,7 +81,7 @@ class AdminController extends Controller
         // Sort all by created_at desc and take top 5
         $recentActivities = $activities->sortByDesc('created_at')->take(5)->values();
         
-        return view('Admin.dashboard', compact('totalDosen', 'totalMahasiswa', 'totalLaporan', 'totalKategori', 'recentActivities'));
+        return view('Admin.dashboard', compact('totalDosen', 'totalMahasiswa', 'totalLaporan', 'totalKategori', 'recentActivities', 'statusStats'));
     }
 
     // ==========================================
@@ -241,5 +247,70 @@ class AdminController extends Controller
         ]);
 
         return redirect('/admin/laporan')->with('success', 'Status laporan berhasil diubah secara paksa oleh Admin.');
+    }
+
+    public function exportCsv()
+    {
+        $this->checkRole();
+        
+        $fileName = 'Laporan_Global_Bimbingan_SI_BILING_' . date('Y-m-d') . '.csv';
+        $ajuans = Ajuan::with(['mahasiswa', 'dosen'])->orderBy('created_at', 'desc')->get();
+        
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+        
+        $columns = array('Tanggal', 'NIM/NIP', 'Nama Mahasiswa', 'Program Studi', 'Dosen PA', 'Kategori Masalah', 'Status', 'Tanggal Bimbingan');
+        
+        $callback = function() use($ajuans, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            
+            foreach ($ajuans as $ajuan) {
+                $row['Tanggal'] = \Carbon\Carbon::parse($ajuan->created_at)->format('Y-m-d');
+                $row['NIM/NIP'] = $ajuan->mahasiswa->nim_nip ?? '-';
+                $row['Nama Mahasiswa'] = $ajuan->mahasiswa->name ?? '-';
+                $row['Program Studi'] = $ajuan->mahasiswa->program_studi ?? '-';
+                $row['Dosen PA'] = $ajuan->dosen->name ?? '-';
+                $row['Kategori Masalah'] = $ajuan->kategori_masalah;
+                $row['Status'] = $ajuan->status;
+                $row['Tanggal Bimbingan'] = $ajuan->tanggal_bimbingan ? \Carbon\Carbon::parse($ajuan->tanggal_bimbingan)->format('Y-m-d') : '-';
+                
+                fputcsv($file, array($row['Tanggal'], $row['NIM/NIP'], $row['Nama Mahasiswa'], $row['Program Studi'], $row['Dosen PA'], $row['Kategori Masalah'], $row['Status'], $row['Tanggal Bimbingan']));
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdf()
+    {
+        $this->checkRole();
+        
+        $totalDosen = User::where('role', 'dosen')->count();
+        $totalMahasiswa = User::where('role', 'mahasiswa')->count();
+        $totalLaporan = Ajuan::count();
+        $totalKategori = Kategori::count();
+
+        $statusStats = Ajuan::select('status', \DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+            
+        // Get all categories to show stats per category
+        $kategoriStats = Ajuan::select('kategori_masalah', \DB::raw('count(*) as total'))
+            ->groupBy('kategori_masalah')
+            ->pluck('total', 'kategori_masalah')
+            ->toArray();
+
+        $pdf = Pdf::loadView('pdf.admin_statistik', compact('totalDosen', 'totalMahasiswa', 'totalLaporan', 'totalKategori', 'statusStats', 'kategoriStats'));
+        
+        return $pdf->download('Laporan_Statistik_SI_BILING_' . date('Y-m-d') . '.pdf');
     }
 }

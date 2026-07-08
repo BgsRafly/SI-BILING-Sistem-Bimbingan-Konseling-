@@ -92,6 +92,11 @@
                                 <span class="bg-red-50 text-red-600 text-xs font-bold px-3 py-1.5 rounded-md border border-red-100">Menunggu WD3</span>
                             @elseif($ajuan->status === 'Diproses Fakultas')
                                 <span class="bg-orange-50 text-orange-600 text-xs font-bold px-3 py-1.5 rounded-md border border-orange-100">Diproses Fakultas</span>
+                                @if($ajuan->tanggal_wd3)
+                                    <div class="mt-2 flex items-center justify-end gap-1 text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100 w-max ml-auto">
+                                        <i class="fa-solid fa-calendar-check"></i> Sudah menentukan jadwal
+                                    </div>
+                                @endif
                             @else
                                 <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1.5 rounded-md border border-green-100">{{ $ajuan->status }}</span>
                             @endif
@@ -112,6 +117,28 @@
                                 <p class="text-sm font-semibold text-gray-900">{{ $ajuan->dosen->name }}</p>
                             </div>
                         </div>
+
+                        <!-- Jadwal Pertemuan WD3 -->
+                        @if($ajuan->tanggal_wd3)
+                        <div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center">
+                                    <i class="fa-regular fa-calendar-check"></i>
+                                </div>
+                                <p class="text-sm font-bold text-purple-900">Jadwal Pertemuan Mahasiswa dengan WD3</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-8">
+                                <div>
+                                    <p class="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">Tanggal</p>
+                                    <p class="text-sm font-semibold text-purple-900">{{ \Carbon\Carbon::parse($ajuan->tanggal_wd3)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">Waktu</p>
+                                    <p class="text-sm font-semibold text-purple-900">{{ $ajuan->waktu_wd3 ? date('H:i', strtotime($ajuan->waktu_wd3)) . ' WITA' : '-' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
 
                         <!-- Deskripsi -->
                         <div>
@@ -168,17 +195,28 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Keputusan Akhir <span class="text-red-500">*</span></label>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="Diproses Fakultas" class="peer sr-only" required>
+                            <input type="radio" name="status" value="Diproses Fakultas" class="peer sr-only" required onchange="toggleJadwalWD3(this)">
                             <div class="border border-gray-200 rounded-lg p-3 text-center peer-checked:border-orange-500 peer-checked:bg-orange-50 peer-checked:text-orange-700 hover:bg-gray-50 transition-all text-sm font-semibold">
                                 Diproses Fakultas
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="Selesai" class="peer sr-only" required>
+                            <input type="radio" name="status" value="Selesai" class="peer sr-only" required onchange="toggleJadwalWD3(this)">
                             <div class="border border-gray-200 rounded-lg p-3 text-center peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 hover:bg-gray-50 transition-all text-sm font-semibold">
                                 Selesai / Ditutup
                             </div>
                         </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4" id="jadwalWd3Container" style="display: none;">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal Pertemuan</label>
+                        <input type="date" name="tanggal_wd3" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20 shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Waktu Pertemuan</label>
+                        <input type="time" name="waktu_wd3" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20 shadow-sm">
                     </div>
                 </div>
 
@@ -208,6 +246,14 @@
 
         function closeModalTindakLanjut() {
             document.getElementById('modalTindakLanjut').classList.add('hidden');
+        }
+
+        function toggleJadwalWD3(element) {
+            if(element.value === 'Diproses Fakultas') {
+                document.getElementById('jadwalWd3Container').style.display = 'grid';
+            } else {
+                document.getElementById('jadwalWd3Container').style.display = 'none';
+            }
         }
     </script>
 </body>

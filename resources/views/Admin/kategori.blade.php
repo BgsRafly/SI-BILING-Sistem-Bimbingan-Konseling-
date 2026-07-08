@@ -58,7 +58,7 @@
         <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0">
             <div class="relative w-96">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" placeholder="Cari kategori..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
+                <input type="text" id="searchInput" placeholder="Cari kategori..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
             </div>
             <div class="flex items-center gap-5">
                 <div class="w-10 h-10 bg-[#004133] rounded-full overflow-hidden ml-2 shadow-sm flex items-center justify-center text-white font-bold">
@@ -105,7 +105,7 @@
                                 <th class="p-4 font-semibold text-center rounded-tr-xl w-32">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-50">
+                        <tbody id="tableBody" class="divide-y divide-gray-50">
                             @forelse($kategoris as $index => $kategori)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="p-4 text-sm text-gray-500 text-center font-medium">{{ $index + 1 }}</td>
@@ -223,6 +223,24 @@
         function closeModalEdit() {
             document.getElementById('modalEdit').classList.add('hidden');
         }
+
+        // Live Search Script
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                if (row.getElementsByTagName('td').length > 1) { // Abaikan baris kosong
+                    let text = row.textContent.toLowerCase();
+                    if (text.indexOf(filter) > -1) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>

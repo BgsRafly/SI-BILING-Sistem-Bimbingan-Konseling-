@@ -32,7 +32,7 @@
                 </div>
                 @endif
 
-                <form action="/register" method="POST" class="mt-8 space-y-5">
+                <form action="/register" method="POST" class="mt-8 space-y-5" onsubmit="return confirm('Apakah data yang Anda masukkan sudah valid?');">
                     @csrf 
 
                     <!-- Nama Lengkap -->
@@ -79,7 +79,7 @@
                         </label>
                         <div class="mt-2">
                             <input type="text" id="no_whatsapp" name="no_whatsapp" required value="{{ old('no_whatsapp') }}"
-                                   placeholder="Contoh: 081234567890" 
+                                   placeholder="Contoh: 081234567890" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="15"
                                    class="block w-full px-4 py-3 border border-gray-200 rounded-xl text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#004133]/20 focus:border-[#004133] transition-all bg-[#FAFBFB]">
                         </div>
                     </div>

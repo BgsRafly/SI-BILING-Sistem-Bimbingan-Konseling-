@@ -56,6 +56,8 @@
                         <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200 uppercase tracking-wider">Menunggu Dosen</span>
                         @elseif($ajuan->status == 'Disetujui')
                         <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 uppercase tracking-wider">Disetujui</span>
+                        @elseif($ajuan->status == 'Reschedule')
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-purple-50 text-purple-600 border border-purple-200 uppercase tracking-wider">Reschedule</span>
                         @elseif($ajuan->status == 'Selesai')
                         <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wider">Selesai</span>
                         @else
@@ -63,7 +65,15 @@
                         @endif
                     </td>
                     <td class="p-4 text-center">
-                        <a href="/mahasiswa/pengajuan/{{ $ajuan->id }}" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">Detail</a>
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="/mahasiswa/pengajuan/{{ $ajuan->id }}" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">Detail</a>
+                            @if($ajuan->status == 'Pending')
+                            <form action="/mahasiswa/pengajuan/{{ $ajuan->id }}/batal" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pengajuan ini?');">
+                                @csrf
+                                <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-100 text-red-600 rounded-lg hover:bg-red-200">Batal</button>
+                            </form>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
