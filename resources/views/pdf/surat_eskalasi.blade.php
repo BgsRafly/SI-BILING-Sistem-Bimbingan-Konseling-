@@ -10,32 +10,43 @@
             line-height: 1.5;
             margin: 2cm 2.54cm;
         }
-        .kop-surat {
-            text-align: center;
+        .kop-table {
+            width: 100%;
             border-bottom: 2px solid black;
             padding-bottom: 10px;
             margin-bottom: 20px;
-            position: relative;
+            border-collapse: collapse;
         }
-        .kop-surat img {
-            position: absolute;
-            left: 0;
-            top: 0;
+        .kop-logo {
             width: 80px;
+            vertical-align: middle;
         }
-        .kop-surat h1 {
+        .kop-logo img {
+            width: 80px;
+            height: auto;
+            display: block;
+        }
+        .kop-text {
+            text-align: center;
+            vertical-align: middle;
+            padding-right: 80px;
+        }
+        .kop-text h1 {
             font-size: 14pt;
             margin: 0;
             font-weight: normal;
+            line-height: 1.2;
         }
-        .kop-surat h2 {
+        .kop-text h2 {
             font-size: 14pt;
-            margin: 0;
+            margin: 2px 0 0 0;
             font-weight: bold;
+            line-height: 1.2;
         }
-        .kop-surat p {
+        .kop-text p {
             font-size: 10pt;
-            margin: 0;
+            margin: 4px 0 0 0;
+            line-height: 1.3;
         }
         .info-surat {
             width: 100%;
@@ -69,21 +80,27 @@
     </style>
 </head>
 <body>
-    <div class="kop-surat">
-        <img src="{{ public_path('images/logounud.jpeg') }}" alt="Logo UNUD">
-        <h1>KEMENTERIAN PENDIDIKAN TINGGI, SAINS,<br>DAN TEKNOLOGI</h1>
-        <h2>UNIVERSITAS UDAYANA</h2>
-        <p>Alamat : Jln. Raya Kampus Unud, Jimbaran, Badung, Bali 80361<br>
-        Telepon : (0361) 701954, 701797, Fax. (0361) 701907<br>
-        Laman : <u>www.unud.ac.id</u></p>
-    </div>
+    <table class="kop-table" style="border: none;">
+        <tr style="border: none;">
+            <td class="kop-logo" style="border: none;">
+                <img src="{{ public_path('images/logounud.jpeg') }}" alt="Logo UNUD">
+            </td>
+            <td class="kop-text" style="border: none;">
+                <h1>KEMENTERIAN PENDIDIKAN TINGGI, SAINS,<br>DAN TEKNOLOGI</h1>
+                <h2>UNIVERSITAS UDAYANA</h2>
+                <p>Alamat : Jln. Raya Kampus Unud, Jimbaran, Badung, Bali 80361<br>
+                Telepon : (0361) 701954, 701797, Fax. (0361) 701907<br>
+                Laman : <u>www.unud.ac.id</u></p>
+            </td>
+        </tr>
+    </table>
 
-    <table class="info-surat">
-        <tr>
-            <td width="70">Nomor</td>
-            <td width="10">:</td>
-            <td>{{ $nomor_surat }}</td>
-            <td align="right">{{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</td>
+    <table class="info-surat" style="border: none;">
+        <tr style="border: none;">
+            <td width="70" style="border: none;">Nomor</td>
+            <td width="10" style="border: none;">:</td>
+            <td style="border: none;">{{ $nomor_surat }}</td>
+            <td align="right" style="border: none;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('DD MMMM YYYY') }}</td>
         </tr>
         <tr>
             <td>Lampiran</td>

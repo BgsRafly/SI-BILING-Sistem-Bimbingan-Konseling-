@@ -66,7 +66,7 @@
         <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0">
             <div class="relative w-96">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" placeholder="Cari eskalasi..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
+                <input type="text" id="search-input" placeholder="Cari eskalasi..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
             </div>
             <div class="flex items-center gap-5">
                 <button class="text-gray-400 hover:text-gray-600 relative">
@@ -99,7 +99,7 @@
                 
                 <div class="divide-y divide-gray-50">
                     @forelse($ajuans as $ajuan)
-                    <div class="p-6 hover:bg-slate-50 transition-colors">
+                    <div class="eskalasi-card p-6 hover:bg-slate-50 transition-colors">
                         <div class="flex justify-between items-start mb-3">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center font-bold text-sm shrink-0">
@@ -144,5 +144,44 @@
     <style>
         .pl-13 { padding-left: 3.25rem; }
     </style>
+    <script>
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.eskalasi-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Handle empty search result state
+            let noResultDiv = document.getElementById('no-search-results');
+            if (visibleCount === 0) {
+                if (!noResultDiv) {
+                    noResultDiv = document.createElement('div');
+                    noResultDiv.id = 'no-search-results';
+                    noResultDiv.className = 'p-12 text-center flex flex-col items-center';
+                    noResultDiv.innerHTML = `
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 text-3xl mb-4">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <h3 class="text-gray-900 font-bold mb-1">Hasil Tidak Ditemukan</h3>
+                        <p class="text-sm text-gray-500">Tidak ada data eskalasi yang cocok dengan pencarian Anda.</p>
+                    `;
+                    document.querySelector('.divide-y').appendChild(noResultDiv);
+                }
+            } else {
+                if (noResultDiv) {
+                    noResultDiv.remove();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

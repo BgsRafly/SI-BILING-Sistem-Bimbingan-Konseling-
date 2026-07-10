@@ -59,7 +59,7 @@
         <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0">
             <div class="relative w-96">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" placeholder="Cari riwayat..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
+                <input type="text" id="search-input" placeholder="Cari riwayat..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
             </div>
             <div class="flex items-center gap-5">
                 <div class="w-10 h-10 bg-gray-900 rounded-full overflow-hidden ml-2 cursor-pointer shadow-sm">
@@ -91,7 +91,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             @forelse($ajuans as $ajuan)
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="riwayat-row hover:bg-gray-50 transition-colors">
                                 <td class="p-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
@@ -140,6 +140,47 @@
             </div>
         </div>
     </main>
+    <script>
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.riwayat-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
 
+            // Handle empty search result state
+            let noResultRow = document.getElementById('no-search-results');
+            if (visibleCount === 0) {
+                if (!noResultRow) {
+                    noResultRow = document.createElement('tr');
+                    noResultRow.id = 'no-search-results';
+                    noResultRow.innerHTML = `
+                        <td colspan="5" class="p-12 text-center text-gray-500 font-medium">
+                            <div class="flex flex-col items-center">
+                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 text-xl mb-3">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                                <p class="text-gray-900 font-bold mb-1">Hasil Tidak Ditemukan</p>
+                                <p class="text-xs text-gray-500">Tidak ada riwayat kasus yang cocok dengan pencarian Anda.</p>
+                            </div>
+                        </td>
+                    `;
+                    document.querySelector('tbody').appendChild(noResultRow);
+                }
+            } else {
+                if (noResultRow) {
+                    noResultRow.remove();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

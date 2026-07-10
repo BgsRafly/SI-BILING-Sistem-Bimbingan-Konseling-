@@ -257,6 +257,23 @@ class DosenController extends Controller
         return $pdf->download('Rekap_Laporan_Bimbingan_'. $dosen->nim_nip .'.pdf');
     }
 
+    public function eksporDetailPdf($id)
+    {
+        $dosen = $this->getDosen();
+        
+        $ajuan = Ajuan::with('mahasiswa')
+            ->where('dosen_id', $dosen->id)
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('pdf.laporan_detail', [
+            'ajuan' => $ajuan,
+            'mahasiswa' => $ajuan->mahasiswa,
+            'dosen' => $dosen
+        ]);
+
+        return $pdf->download('Laporan_Konseling_' . $ajuan->mahasiswa->nim_nip . '_' . $ajuan->id . '.pdf');
+    }
+
     public function bimbinganPA()
     {
         $dosen = $this->getDosen();

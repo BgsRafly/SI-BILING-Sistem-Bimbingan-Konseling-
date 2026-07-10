@@ -59,7 +59,7 @@
         <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0">
             <div class="relative w-96">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" placeholder="Cari arsip surat..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
+                <input type="text" id="search-input" placeholder="Cari arsip surat..." class="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20">
             </div>
             <div class="flex items-center gap-5">
                 <div class="w-10 h-10 bg-gray-900 rounded-full overflow-hidden ml-2 cursor-pointer shadow-sm">
@@ -80,7 +80,7 @@
             <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($ajuans as $ajuan)
-                    <div class="border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow flex flex-col">
+                    <div class="rujukan-card border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow flex flex-col">
                         <div class="flex items-start justify-between mb-4">
                             <div class="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center text-2xl">
                                 <i class="fa-solid fa-file-pdf"></i>
@@ -111,6 +111,44 @@
             </div>
         </div>
     </main>
+    <script>
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.rujukan-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
 
+            // Handle empty search result state
+            let noResultDiv = document.getElementById('no-search-results');
+            if (visibleCount === 0) {
+                if (!noResultDiv) {
+                    noResultDiv = document.createElement('div');
+                    noResultDiv.id = 'no-search-results';
+                    noResultDiv.className = 'col-span-full p-12 text-center flex flex-col items-center';
+                    noResultDiv.innerHTML = `
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 text-3xl mb-4">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <h3 class="text-gray-900 font-bold mb-1">Hasil Tidak Ditemukan</h3>
+                        <p class="text-sm text-gray-500">Tidak ada arsip surat rujukan yang cocok dengan pencarian Anda.</p>
+                    `;
+                    document.querySelector('.grid').appendChild(noResultDiv);
+                }
+            } else {
+                if (noResultDiv) {
+                    noResultDiv.remove();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

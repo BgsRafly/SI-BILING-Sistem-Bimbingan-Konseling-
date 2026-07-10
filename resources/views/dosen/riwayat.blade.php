@@ -18,7 +18,8 @@
                     <th class="p-4 font-semibold">Topik / Masalah</th>
                     <th class="p-4 font-semibold">Waktu Bimbingan</th>
                     <th class="p-4 font-semibold">Catatan Anda</th>
-                    <th class="p-4 font-semibold text-center rounded-tr-xl">Status</th>
+                    <th class="p-4 font-semibold text-center">Status</th>
+                    <th class="p-4 font-semibold text-right rounded-tr-xl">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -53,10 +54,20 @@
                             <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">Ditolak</span>
                         @endif
                     </td>
+                    <td class="p-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <a href="/dosen/laporan/{{ $ajuan->id }}/pdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-lg text-xs font-bold transition-colors">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </a>
+                            <a href="/dosen/pengajuan/{{ $ajuan->id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#004133]/10 text-[#004133] hover:bg-[#004133]/20 border border-[#004133]/20 rounded-lg text-xs font-bold transition-colors">
+                                Detail
+                            </a>
+                        </div>
+                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="p-8 text-center text-slate-500 font-medium">
+                    <td colspan="6" class="p-8 text-center text-slate-500 font-medium">
                         Belum ada riwayat sesi konseling.
                     </td>
                 </tr>

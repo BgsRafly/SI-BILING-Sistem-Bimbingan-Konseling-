@@ -173,8 +173,8 @@
                 <div>
                     <h4 class="text-white font-bold mb-6 text-lg">Pintasan Akses</h4>
                     <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs"></i> Portal Akademik (IMISSU)</a></li>
-                        <li><a href="#" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs"></i> Website Resmi FMIPA</a></li>
+                        <li><a href="https://imissu.unud.ac.id/Home" target="_blank" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs"></i> Portal Akademik (IMISSU)</a></li>
+                        <li><a href="https://fmipa.unud.ac.id/" target="_blank" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs"></i> Website Resmi FMIPA</a></li>
                     </ul>
                 </div>
 

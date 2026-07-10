@@ -2,13 +2,20 @@
 @section('title', 'Tinjau Ajuan - SI-BILING')
 
 @section('content')
-<div class="mb-6 flex items-center gap-4">
-    <a href="/dosen/pengajuan" class="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-[#004133] hover:bg-slate-50 transition-colors shadow-sm">
-        <i class="fa-solid fa-arrow-left"></i>
-    </a>
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex items-center gap-4">
+        <a href="/dosen/pengajuan" class="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-[#004133] hover:bg-slate-50 transition-colors shadow-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Tinjau Pengajuan Konseling</h1>
+            <p class="text-slate-500 mt-1 text-sm font-medium">Detail informasi dari mahasiswa.</p>
+        </div>
+    </div>
     <div>
-        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Tinjau Pengajuan Konseling</h1>
-        <p class="text-slate-500 mt-1 text-sm font-medium">Detail informasi dari mahasiswa.</p>
+        <a href="/dosen/laporan/{{ $ajuan->id }}/pdf" class="bg-red-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-700 transition-colors shadow-sm flex items-center gap-2 w-fit">
+            <i class="fa-solid fa-file-pdf"></i> Ekspor PDF Detail
+        </a>
     </div>
 </div>
 

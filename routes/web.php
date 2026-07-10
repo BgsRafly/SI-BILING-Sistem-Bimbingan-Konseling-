@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dosen/bimbingan_pa', [DosenController::class, 'bimbinganPA']);
     Route::get('/dosen/laporan', [DosenController::class, 'laporan']);
     Route::get('/dosen/laporan/ekspor', [DosenController::class, 'eksporLaporan']);
+    Route::get('/dosen/laporan/{id}/pdf', [DosenController::class, 'eksporDetailPdf']);
     Route::get('/dosen/pengaturan', [DosenController::class, 'pengaturan']);
 
     Route::get('/mahasiswa/dashboard', [MahasiswaController::class, 'dashboard']);

@@ -100,6 +100,7 @@
                         <th class="p-4 font-semibold">Tanggal & Waktu</th>
                         <th class="p-4 font-semibold">Kategori</th>
                         <th class="p-4 font-semibold">Status</th>
+                        <th class="p-4 font-semibold text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -140,10 +141,20 @@
                                 <span class="bg-gray-100 text-gray-600 text-xs font-bold px-2.5 py-1 rounded-md border border-gray-200">{{ $ajuan->status }}</span>
                             @endif
                         </td>
+                        <td class="p-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="/dosen/laporan/{{ $ajuan->id }}/pdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-lg text-xs font-bold transition-colors">
+                                    <i class="fa-solid fa-file-pdf"></i> PDF
+                                </a>
+                                <a href="/dosen/pengajuan/{{ $ajuan->id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#004133]/10 text-[#004133] hover:bg-[#004133]/20 border border-[#004133]/20 rounded-lg text-xs font-bold transition-colors">
+                                    Detail
+                                </a>
+                            </div>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="p-8 text-center text-gray-500">Belum ada riwayat bimbingan.</td>
+                        <td colspan="5" class="p-8 text-center text-gray-500">Belum ada riwayat bimbingan.</td>
                     </tr>
                     @endforelse
                 </tbody>
