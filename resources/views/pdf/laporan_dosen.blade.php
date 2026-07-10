@@ -51,7 +51,7 @@
     <div class="header">
         <h2>LAPORAN REKAPITULASI BIMBINGAN AKADEMIK</h2>
         <h3>SISTEM INFORMASI BIMBINGAN (SI-BILING)</h3>
-        <p>Tanggal Cetak: {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
+        <p>Filter: {{ $filterText ?? 'Semua Waktu' }} | Tanggal Cetak: {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
     </div>
 
     <div class="info-dosen">

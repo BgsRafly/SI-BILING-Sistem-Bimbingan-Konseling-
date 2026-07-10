@@ -74,6 +74,54 @@
                     <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Laporan Global Konseling</h1>
                     <p class="text-gray-500 mt-2 text-sm font-medium">Pantau semua pengajuan bimbingan dari seluruh role dan status secara terpusat.</p>
                 </div>
+                <div class="flex items-center gap-3">
+                    <a href="/admin/laporan/pdf?{{ http_build_query(request()->all()) }}" class="bg-red-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-700 transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> Ekspor PDF
+                    </a>
+                    <a href="/admin/laporan/ekspor?{{ http_build_query(request()->all()) }}" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel"></i> Ekspor CSV
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 mb-8">
+                <form action="/admin/laporan" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label for="tanggal" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
+                        <input type="date" name="tanggal" id="tanggal" value="{{ request('tanggal') }}" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20 bg-gray-50">
+                    </div>
+                    <div>
+                        <label for="bulan" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Bulan</label>
+                        <select name="bulan" id="bulan" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20 bg-gray-50">
+                            <option value="">-- Semua Bulan --</option>
+                            @foreach([
+                                '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',
+                                '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
+                                '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+                            ] as $key => $name)
+                                <option value="{{ $key }}" {{ request('bulan') == $key ? 'selected' : '' }}>{{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tahun" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tahun</label>
+                        <select name="tahun" id="tahun" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#004133]/20 bg-gray-50">
+                            <option value="">-- Semua Tahun --</option>
+                            @foreach($years as $yr)
+                                <option value="{{ $yr }}" {{ request('tahun') == $yr ? 'selected' : '' }}>{{ $yr }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 bg-[#004133] text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-[#003328] transition-colors shadow-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-filter"></i> Filter
+                        </button>
+                        <a href="/admin/laporan" class="px-4 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-semibold hover:bg-gray-50 flex items-center justify-center">
+                            Reset
+                        </a>
+                    </div>
+                </form>
             </div>
 
             @if(session('success'))

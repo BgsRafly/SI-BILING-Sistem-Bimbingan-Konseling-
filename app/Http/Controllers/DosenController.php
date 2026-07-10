@@ -208,51 +208,104 @@ class DosenController extends Controller
         return view('dosen.eskalasi', compact('dosen', 'ajuans'));
     }
 
-    public function laporan()
+    public function laporan(Request $request)
     {
         $dosen = $this->getDosen();
         
+        // Base query with filters applied
+        $baseQuery = Ajuan::where('dosen_id', $dosen->id);
+
+        if ($request->filled('tanggal')) {
+            $baseQuery->whereDate('created_at', $request->tanggal);
+        }
+        if ($request->filled('bulan')) {
+            $baseQuery->whereMonth('created_at', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $baseQuery->whereYear('created_at', $request->tahun);
+        }
+        
         $stats = [
-            'total' => Ajuan::where('dosen_id', $dosen->id)->count(),
-            'pending' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Pending')->count(),
-            'disetujui' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Disetujui')->count(),
-            'selesai' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Selesai')->count(),
-            'ditolak' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Ditolak')->count(),
-            'eskalasi' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Eskalasi WD3')->count(),
-            'reschedule' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Reschedule')->count(),
+            'total' => (clone $baseQuery)->count(),
+            'pending' => (clone $baseQuery)->where('status', 'Pending')->count(),
+            'disetujui' => (clone $baseQuery)->where('status', 'Disetujui')->count(),
+            'selesai' => (clone $baseQuery)->where('status', 'Selesai')->count(),
+            'ditolak' => (clone $baseQuery)->where('status', 'Ditolak')->count(),
+            'eskalasi' => (clone $baseQuery)->where('status', 'Eskalasi WD3')->count(),
+            'reschedule' => (clone $baseQuery)->where('status', 'Reschedule')->count(),
         ];
 
-        $byKategori = Ajuan::where('dosen_id', $dosen->id)
+        $byKategori = (clone $baseQuery)
             ->select('kategori_masalah', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('kategori_masalah')
             ->get();
 
-        $ajuans = Ajuan::with('mahasiswa')
-            ->where('dosen_id', $dosen->id)
+        $ajuans = (clone $baseQuery)->with('mahasiswa')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('dosen.laporan', compact('dosen', 'stats', 'byKategori', 'ajuans'));
+        // Get unique years from database for filters dropdown
+        $years = Ajuan::where('dosen_id', $dosen->id)
+            ->selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+            
+        if (empty($years)) {
+            $years = [date('Y')];
+        }
+
+        return view('dosen.laporan', compact('dosen', 'stats', 'byKategori', 'ajuans', 'years'));
     }
 
-    public function eksporLaporan()
+    public function eksporLaporan(Request $request)
     {
         $dosen = $this->getDosen();
         
+        $baseQuery = Ajuan::where('dosen_id', $dosen->id);
+
+        if ($request->filled('tanggal')) {
+            $baseQuery->whereDate('created_at', $request->tanggal);
+        }
+        if ($request->filled('bulan')) {
+            $baseQuery->whereMonth('created_at', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $baseQuery->whereYear('created_at', $request->tahun);
+        }
+        
         $stats = [
-            'total' => Ajuan::where('dosen_id', $dosen->id)->count(),
-            'pending' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Pending')->count(),
-            'selesai' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Selesai')->count(),
-            'eskalasi' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Eskalasi WD3')->count(),
-            'reschedule' => Ajuan::where('dosen_id', $dosen->id)->where('status', 'Reschedule')->count(),
+            'total' => (clone $baseQuery)->count(),
+            'pending' => (clone $baseQuery)->where('status', 'Pending')->count(),
+            'selesai' => (clone $baseQuery)->where('status', 'Selesai')->count(),
+            'eskalasi' => (clone $baseQuery)->where('status', 'Eskalasi WD3')->count(),
+            'reschedule' => (clone $baseQuery)->where('status', 'Reschedule')->count(),
         ];
 
-        $ajuans = Ajuan::with('mahasiswa')
-            ->where('dosen_id', $dosen->id)
+        $ajuans = (clone $baseQuery)->with('mahasiswa')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        $pdf = Pdf::loadView('pdf.laporan_dosen', compact('dosen', 'stats', 'ajuans'));
+        // Filter info text for rendering in PDF
+        $filterInfo = [];
+        if ($request->filled('tanggal')) {
+            $filterInfo[] = 'Tanggal: ' . \Carbon\Carbon::parse($request->tanggal)->format('d-m-Y');
+        }
+        if ($request->filled('bulan')) {
+            $months = [
+                '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',
+                '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
+                '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+            ];
+            $filterInfo[] = 'Bulan: ' . ($months[$request->bulan] ?? $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $filterInfo[] = 'Tahun: ' . $request->tahun;
+        }
+        $filterText = !empty($filterInfo) ? implode(', ', $filterInfo) : 'Semua Waktu';
+
+        $pdf = Pdf::loadView('pdf.laporan_dosen', compact('dosen', 'stats', 'ajuans', 'filterText'));
         
         return $pdf->download('Rekap_Laporan_Bimbingan_'. $dosen->nim_nip .'.pdf');
     }

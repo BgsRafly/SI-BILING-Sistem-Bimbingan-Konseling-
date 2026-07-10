@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     // Admin Laporan
     Route::get('/admin/laporan', [AdminController::class, 'laporan']);
     Route::get('/admin/laporan/ekspor', [AdminController::class, 'exportCsv']);
+    Route::get('/admin/laporan/pdf', [AdminController::class, 'exportLaporanPdf']);
     Route::post('/admin/laporan/{id}/status', [AdminController::class, 'updateStatusLaporan']);
     Route::get('/admin/dashboard/pdf', [AdminController::class, 'exportPdf']);
 });

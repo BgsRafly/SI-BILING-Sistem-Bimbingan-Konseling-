@@ -221,15 +221,36 @@ class AdminController extends Controller
     // 4. MANAJEMEN LAPORAN GLOBAL
     // ==========================================
 
-    public function laporan()
+    public function laporan(Request $request)
     {
         $this->checkRole();
         
-        $ajuans = Ajuan::with(['mahasiswa', 'dosen'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+        $baseQuery = Ajuan::with(['mahasiswa', 'dosen']);
+
+        if ($request->filled('tanggal')) {
+            $baseQuery->whereDate('created_at', $request->tanggal);
+        }
+        if ($request->filled('bulan')) {
+            $baseQuery->whereMonth('created_at', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $baseQuery->whereYear('created_at', $request->tahun);
+        }
+        
+        $ajuans = $baseQuery->orderBy('created_at', 'desc')->get();
+        
+        // Get unique years from database for filters dropdown
+        $years = Ajuan::selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+            
+        if (empty($years)) {
+            $years = [date('Y')];
+        }
                     
-        return view('Admin.laporan', compact('ajuans'));
+        return view('Admin.laporan', compact('ajuans', 'years'));
     }
 
     public function updateStatusLaporan(Request $request, $id)
@@ -249,12 +270,24 @@ class AdminController extends Controller
         return redirect('/admin/laporan')->with('success', 'Status laporan berhasil diubah secara paksa oleh Admin.');
     }
 
-    public function exportCsv()
+    public function exportCsv(Request $request)
     {
         $this->checkRole();
         
+        $baseQuery = Ajuan::with(['mahasiswa', 'dosen']);
+
+        if ($request->filled('tanggal')) {
+            $baseQuery->whereDate('created_at', $request->tanggal);
+        }
+        if ($request->filled('bulan')) {
+            $baseQuery->whereMonth('created_at', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $baseQuery->whereYear('created_at', $request->tahun);
+        }
+
         $fileName = 'Laporan_Global_Bimbingan_SI_BILING_' . date('Y-m-d') . '.csv';
-        $ajuans = Ajuan::with(['mahasiswa', 'dosen'])->orderBy('created_at', 'desc')->get();
+        $ajuans = $baseQuery->orderBy('created_at', 'desc')->get();
         
         $headers = array(
             "Content-type"        => "text/csv",
@@ -287,6 +320,57 @@ class AdminController extends Controller
         };
         
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportLaporanPdf(Request $request)
+    {
+        $this->checkRole();
+        
+        $baseQuery = Ajuan::with(['mahasiswa', 'dosen']);
+
+        if ($request->filled('tanggal')) {
+            $baseQuery->whereDate('created_at', $request->tanggal);
+        }
+        if ($request->filled('bulan')) {
+            $baseQuery->whereMonth('created_at', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $baseQuery->whereYear('created_at', $request->tahun);
+        }
+
+        $ajuans = $baseQuery->orderBy('created_at', 'asc')->get();
+        
+        $stats = [
+            'total' => (clone $baseQuery)->count(),
+            'pending' => (clone $baseQuery)->where('status', 'Pending')->count(),
+            'disetujui' => (clone $baseQuery)->where('status', 'Disetujui')->count(),
+            'selesai' => (clone $baseQuery)->where('status', 'Selesai')->count(),
+            'ditolak' => (clone $baseQuery)->where('status', 'Ditolak')->count(),
+            'eskalasi' => (clone $baseQuery)->where('status', 'Eskalasi WD3')->count(),
+            'reschedule' => (clone $baseQuery)->where('status', 'Reschedule')->count(),
+        ];
+
+        // Filter info text for rendering in PDF
+        $filterInfo = [];
+        if ($request->filled('tanggal')) {
+            $filterInfo[] = 'Tanggal: ' . \Carbon\Carbon::parse($request->tanggal)->format('d-m-Y');
+        }
+        if ($request->filled('bulan')) {
+            $months = [
+                '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',
+                '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
+                '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+            ];
+            $filterInfo[] = 'Bulan: ' . ($months[$request->bulan] ?? $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $filterInfo[] = 'Tahun: ' . $request->tahun;
+        }
+        $filterText = !empty($filterInfo) ? implode(', ', $filterInfo) : 'Semua Waktu';
+
+        $pdf = Pdf::loadView('pdf.laporan_admin', compact('stats', 'ajuans', 'filterText'));
+        
+        return $pdf->download('Laporan_Global_Bimbingan_' . date('Y-m-d') . '.pdf');
     }
 
     public function exportPdf()
