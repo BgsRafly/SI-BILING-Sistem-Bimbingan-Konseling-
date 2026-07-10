@@ -57,7 +57,7 @@ class MahasiswaController extends Controller
     {
         $request->validate([
             'kategori_masalah' => 'required|string',
-            'skala_beban_pikiran' => 'required|integer|min:1|max:10',
+            'skala_beban_pikiran' => 'required|integer|min:1|max:5',
             'skala_urgensi' => 'required|integer|min:1|max:5',
             'deskripsi_keluhan' => 'required|string',
             'harapan_mahasiswa' => 'required|string',

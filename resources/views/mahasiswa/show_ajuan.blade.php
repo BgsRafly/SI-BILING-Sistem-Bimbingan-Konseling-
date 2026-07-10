@@ -83,12 +83,12 @@
                 </div>
 
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Skala Beban Pikiran (1-10)</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Skala Beban Pikiran (1-5)</p>
                     <div class="flex items-center gap-3">
                         <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full {{ $ajuan->skala_beban_pikiran > 7 ? 'bg-red-500' : ($ajuan->skala_beban_pikiran > 4 ? 'bg-orange-500' : 'bg-green-500') }}" style="width: {{ $ajuan->skala_beban_pikiran * 10 }}%"></div>
+                            <div class="h-full {{ $ajuan->skala_beban_pikiran >= 4 ? 'bg-red-500' : ($ajuan->skala_beban_pikiran == 3 ? 'bg-orange-500' : 'bg-green-500') }}" style="width: {{ $ajuan->skala_beban_pikiran * 20 }}%"></div>
                         </div>
-                        <span class="font-bold text-slate-700 text-sm">{{ $ajuan->skala_beban_pikiran }} / 10</span>
+                        <span class="font-bold text-slate-700 text-sm">{{ $ajuan->skala_beban_pikiran }} / 5</span>
                     </div>
                 </div>
 

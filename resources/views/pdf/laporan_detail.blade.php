@@ -198,7 +198,7 @@
         </tr>
         <tr>
             <td class="label">Skala Beban Pikiran</td>
-            <td class="value">: {{ $ajuan->skala_beban_pikiran }} / 10</td>
+            <td class="value">: {{ $ajuan->skala_beban_pikiran }} / 5</td>
         </tr>
         <tr>
             <td class="label">Skala Urgensi</td>
