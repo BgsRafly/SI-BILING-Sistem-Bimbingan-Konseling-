@@ -1,59 +1,43 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SI-BILING (Sistem Informasi Bimbingan Konseling)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SI-BILING adalah sebuah platform berbasis web yang dirancang untuk memfasilitasi dan mendigitalisasi proses bimbingan konseling di lingkungan kampus. Sistem ini menjembatani komunikasi dan penanganan masalah antara Mahasiswa, Dosen, Pembimbing Akademik (PA), dan Wakil Dekan 3 (WD3) secara terstruktur, aman, dan efisien.
 
-## About Laravel
+## 🚀 Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistem ini memiliki manajemen hak akses (Role-Based Access Control) dengan fitur spesifik untuk setiap pengguna:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Mahasiswa
+* **Pengajuan Konseling:** Membuat laporan/ajuan konseling baru dengan memilih kategori masalah dan dosen yang dituju.
+* **Manajemen Ajuan:** Membatalkan (cancel) ajuan selama status masih "Menunggu".
+* **Real-time Tracking:** Memantau status ajuan secara langsung (termasuk sinkronisasi otomatis jika jadwal di-reschedule oleh dosen).
+* **Profil Dinamis:** Menampilkan data profil dan tahun angkatan secara dinamis berdasarkan sesi login.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Dosen
+* **Manajemen Laporan:** Menerima, meninjau, dan merespons ajuan konseling dari mahasiswa.
+* **Eskalasi Kasus:** Melakukan eskalasi laporan ke tingkat fakultas (WD3) untuk kasus yang membutuhkan penanganan lanjutan.
+* **Auto-Generate Dokumen:** Sistem secara otomatis membuat Surat Eskalasi Resmi dalam format PDF saat aksi eskalasi dilakukan.
+* **Visualisasi Data:** Dashboard dilengkapi dengan chart/diagram untuk merangkum statistik laporan bimbingan.
 
-## Learning Laravel
+### 3. Pembimbing Akademik (PA)
+* **Monitoring:** Memantau riwayat, aktivitas, dan status laporan konseling mahasiswa bimbingannya, terutama untuk kasus-kasus yang telah mengalami eskalasi.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 4. Wakil Dekan 3 (WD3)
+* **Tinjauan Eskalasi:** Menerima dan mengelola laporan konseling yang diekskalasi oleh Dosen.
+* **Unduh Berkas:** Mengunduh surat pengantar eskalasi (PDF) secara langsung dari sistem.
+* **Penjadwalan Tetap:** Menetapkan jadwal dan waktu tindak lanjut (fixed schedule yang tidak dapat diubah/di-reschedule lagi).
+* **Tindak Lanjut & Penyelesaian:** Memberikan catatan akhir dan mengubah status laporan menjadi "Selesai".
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 5. Admin (Superadmin)
+* **Master Data:** CRUD (Create, Read, Update, Delete) akun Dosen, Mahasiswa, dan Kategori Masalah secara global.
+* **Global Monitoring:** Memantau seluruh alur laporan konseling dari awal hingga akhir.
+* **Reporting:** Menghasilkan (generate) laporan rekapitulasi data konseling.
+* **Dashboard Statistik:** Visualisasi data sistem secara menyeluruh melalui grafik dan diagram interaktif.
 
-## Laravel Sponsors
+## 🛠️ Teknologi yang Digunakan
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+* **Backend:** Laravel (PHP)
+* **Frontend:** Vue.js, HTML/CSS, JavaScript
+* **Database:** MySQL
+* **PDF Generator:** DomPDF (atau library sejenis untuk pembuatan surat eskalasi)
+* **Integrasi Lainnya:** Direct Link API WhatsApp (wa.me)
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
